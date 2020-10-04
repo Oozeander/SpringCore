@@ -1,0 +1,9 @@
+com\oozeander\model\Circle.class
+com\oozeander\model\TriangleWithPoints.class
+com\oozeander\model\DatabaseConnection.class
+com\oozeander\App.class
+com\oozeander\spring\MessagingConfig.class
+com\oozeander\model\SimpleTriangle.class
+com\oozeander\model\TriangleWithPointList.class
+com\oozeander\model\Point.class
+com\oozeander\spring\JavaConfig.class

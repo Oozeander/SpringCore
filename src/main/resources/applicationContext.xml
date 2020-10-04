@@ -1,0 +1,101 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:annotation-config/>
+	<context:component-scan base-package="com.oozeander.model"/>
+	
+	<import resource="applicationContext-messaging.xml"/>
+
+    <bean id="triangle_setter" class="com.oozeander.model.SimpleTriangle"
+    	p:height="5" scope="singleton">
+    	<property name="type" value="isocèle"/>
+    </bean>
+    
+    <bean id="triangle_constructor" class="com.oozeander.model.SimpleTriangle"
+    	primary="true" scope="singleton">
+    	<constructor-arg name="type" type="java.lang.String" value="équilatéral"/>
+		<constructor-arg name="height" type="java.math.BigInteger" value="7"/>
+    </bean>
+    
+    <bean id="zeroPoint" class="com.oozeander.model.Point"
+    	init-method="init" destroy-method="destroy"
+    	p:x="0" p:y="0" scope="prototype"/>
+
+    <bean id="triangle_points" class="com.oozeander.model.TriangleWithPoints">
+    	<property name="pointA" ref="zeroPoint"/>
+		<!-- Inner beans -->
+    	<property name="pointB">
+			<bean class="com.oozeander.model.Point" p:x="0" p:y="5"/>
+		</property>
+    	<property name="pointC">
+    		<bean class="com.oozeander.model.Point" p:x="5" p:y="5"/>
+    	</property>
+    </bean>
+  
+  	<!-- Collections -->
+  	<util:list id="points" list-class="java.util.ArrayList"
+  		value-type="com.oozeander.model.Point">
+  		<ref bean="zeroPoint"/>
+    	<bean class="com.oozeander.model.Point" p:x="0" p:y="5"/>
+    	<bean class="com.oozeander.model.Point" p:x="5" p:y="5"/>
+  	</util:list>
+  	
+  	<util:set id="mySet" set-class="java.util.HashSet"
+  		value-type="java.lang.String">
+  		<value>Je suis</value>
+  		<value>le meilleur</value>
+  		<value>:-)</value>
+  	</util:set>
+  	
+  	<util:map id="myMap" key-type="java.math.BigInteger"
+  		map-class="java.util.HashMap" value-type="com.oozeander.model.Point">
+  		<!-- key / key-ref / value / value-ref -->
+  		<entry key="1" value-ref="zeroPoint"/>
+  		<entry key="2">
+  			<bean class="com.oozeander.model.Point" p:x="0" p:y="5"/>
+  		</entry>
+  		<entry key="3">
+  			<bean class="com.oozeander.model.Point" p:x="5" p:y="5"/>
+  		</entry>
+  	</util:map>
+  	
+  	<util:properties id="myProps" value-type="java.math.BigInteger">
+  		<prop key="One">1</prop>
+  		<prop key="Two">2</prop>
+  		<prop key="Three">3</prop>
+  	</util:properties>
+  	<!-- Collections end -->
+  
+    <bean id="triangle_pointList" class="com.oozeander.model.TriangleWithPointList">
+    	<property name="points" ref="points"/>
+    </bean>
+    
+    <!-- Autowire 
+    	byName => propertyName = id
+    	byType => only one type available or primary
+    	byConstructor => same as byType but constructor injection
+    -->
+	<bean id="triangleWithPointList" class="com.oozeander.model.TriangleWithPointList"
+		autowire="byName" primary="true"/>
+		
+	<!-- Bean inheritance -->
+	<bean id="parentTriangleWithPointList" class="com.oozeander.model.TriangleWithPointList"
+		abstract="true" autowire="byName"/>
+	
+	<bean id="triangleInherited" class="com.oozeander.model.TriangleWithPointList"
+		parent="parentTriangleWithPointList">
+		<!-- Add elements to the inherited list -->
+		<property name="points">
+			<list>
+				<bean class="com.oozeander.model.Point" p:x="12" p:y="15"/>
+			</list>
+    	</property>
+	</bean>
+</beans>
